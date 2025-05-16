@@ -9,3 +9,8 @@ A server management web interface written in nodejs using react.
 	- [x] Temporary plain text
 - [x] Settings stored in MySQL
 - [ ] Retrieve and display server status
+
+### Running
+```cmd
+npm run dev
+```

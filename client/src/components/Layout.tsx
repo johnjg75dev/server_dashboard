@@ -58,7 +58,7 @@ const Layout: React.FC = () => {
           <Box sx={{display: 'flex', alignItems: 'center'}}>
             <AccountCircleIcon sx={{mr: 1, color: 'secondary.main'}}/>
             <Typography variant="body1" sx={{mr: 2}}>
-              {auth.username || 'User'}
+              {auth.user?.username || 'User'}
             </Typography>
             <Button
               color="secondary"

@@ -14,17 +14,20 @@ const users = [
 
 exports.login = async (req, res) => {
     const { username, password } = req.body;
+    console.log(`[AuthController Login] Received - Username: "${username}", Password: "${password}" (length: ${password?.length})`); // DEBUG
 
     try {
         // Find user (in a real app, query your database)
         const user = users.find(u => u.username === username);
         if (!user) {
+            console.log(`[AuthController Login] User not found for username: "${username}"`); // DEBUG
             return res.status(400).json({ message: 'Invalid credentials (user)' });
         }
 
         // Check password
         const isMatch = await bcrypt.compare(password, user.passwordHash);
         if (!isMatch) {
+            console.log(`[AuthController Login] Password mismatch for username: "${username}"`); // DEBUG
             return res.status(400).json({ message: 'Invalid credentials (password)' });
         }
 
@@ -47,7 +50,7 @@ exports.login = async (req, res) => {
             }
         );
     } catch (err) {
-        console.error(err.message);
+        console.error('[AuthController Login] Server error:', err.message, err.stack); // DEBUG with stack
         res.status(500).send('Server error during login');
     }
 };

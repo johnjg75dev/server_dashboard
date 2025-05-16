@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import apiClient from '../services/apiClient';
 import {
   Container,
   Box,
@@ -21,18 +22,30 @@ const LoginPage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent) => {
+const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
-    const success = await auth.login(username, password);
-    setLoading(false);
-    if (success) {
-      navigate('/');
-    } else {
-      setError('Invalid credentials. Try admin/admin.');
+    try {
+        console.log('LoginPage: Attempting login with', { username, password }); // For debugging
+        const response = await apiClient.post('/auth/login', { username, password }); // apiClient should be used
+        console.log('LoginPage: Login response:', response); // For debugging
+        // Check if the response contains a token and user data
+        if (response.data.token && response.data.user) {
+            localStorage.setItem('authToken', response.data.token); // Storing token
+            console.log('LoginPage: Token stored:', response.data.token); // For debugging
+            auth.loginSuccess(response.data.user, response.data.token); // Update AuthContext
+            navigate('/');
+        } else {
+            setError(response.data.message || 'Login failed. No token received.');
+        }
+    } catch (err: any) {
+        // ... error handling ...
+        console.error('LoginPage: Login error:', err); // For debugging
+        setError(err.response?.data?.message || 'Invalid credentials or server error.');
     }
-  };
+    setLoading(false);
+};
 
   return (
     <Container component="main" maxWidth="xs">

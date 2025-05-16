@@ -55,8 +55,8 @@ async function updateConfig(key, value, isJson = false) {
         // Using INSERT ... ON DUPLICATE KEY UPDATE to handle existing or new keys
         // Assumes config_key is UNIQUE
         const [result] = await dbPool.query(
-            'INSERT INTO configurations (config_key, config_value, is_json) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE config_value = VALUES(config_value), is_json = VALUES(is_json), updated_at = NOW()',
-            [key, valueToStore, isJson]
+            'INSERT INTO configurations (config_key, config_value) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE config_value = VALUES(config_value), updated_at = NOW()',
+            [key, valueToStore]
         );
 
         if (result.affectedRows > 0 || result.insertId > 0) {

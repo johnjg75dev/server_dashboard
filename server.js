@@ -16,12 +16,36 @@ const apacheRoutes = require('./server_api/routes/apacheRoutes');
 
 const app = express();
 
-// Middleware
-app.use(cors({ // Configure CORS properly
-    origin: process.env.NODE_ENV === 'production' ? 'http://127.0.0.1/production/' : 'http://localhost:3000', // Allow React dev server
-    credentials: true // If you use cookies/sessions
-}));
-app.use(express.json());
+// --- CORS Configuration ---
+// Define allowed origins. In development, this is your React dev server.
+// In production, it would be your actual frontend domain.
+const allowedOrigins = [
+    'http://localhost', // Your React dev server
+    'http://localhost:3000', // Your React dev server
+    'http://localhost:5001', // Your backend server (if needed)
+    // Add your production frontend URL here if you deploy, e.g., 'https://yourdomain.com'
+];
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        // or if the origin is in the allowedOrigins list.
+        /*if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.error(`CORS Error: Origin ${origin} not allowed.`); // Log denied origins
+            callback(new Error('Not allowed by CORS'));
+        }*/
+       callback(null, true); // Allow all origins for now (for testing)
+    },
+
+    credentials: true, // Important for cookies, authorization headers with HTTPS
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Specify allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // Specify allowed headers
+};
+
+//app.use(cors(corsOptions)); // Use the detailed corsOptions
+
 
 async function startServer() {
     try {
@@ -29,10 +53,11 @@ async function startServer() {
 
         const app = express();
 
-        app.use(cors({ // Configure CORS properly
+        /*app.use(cors({ // Configure CORS properly
             origin: process.env.NODE_ENV === 'production' ? 'YOUR_PRODUCTION_DOMAIN' : 'http://localhost:3000', // Allow React dev server
             credentials: true // If you use cookies/sessions
-        }));
+        }));*/
+        app.use(cors(corsOptions)); // Use the detailed corsOptions
         app.use(express.json());
 
         // API Routes

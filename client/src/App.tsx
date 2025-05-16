@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { ThemeProvider, CssBaseline, Button, Typography } from '@mui/material'; // Added Button, Typography
+import { ThemeProvider, CssBaseline, Box, CircularProgress, Button, Typography } from '@mui/material'; // Added Button, Typography
 import customTheme from './theme';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
@@ -24,12 +24,14 @@ import SettingsPage from './pages/SettingsPage';
 
 // ProtectedRoute should be defined before App component
 const ProtectedRoute: React.FC = () => {
+
   const auth = useAuth();
+  if (auth.isLoading) {
+    return <Box display="flex" justifyContent="center" alignItems="center" height="100vh"><CircularProgress /></Box>; // Or some loading spinner
+  }
   if (!auth.isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  // IMPORTANT FIX for TS2559: Layout contains its own Outlet for child routes.
-  // ProtectedRoute's job is to wrap Layout, not to pass an Outlet into Layout.
   return <Layout />;
 };
 

@@ -19,7 +19,9 @@ exports.updateSettings = async (req, res) => {
     try {
         // Basic validation for each setting object
         for (const setting of settings) {
-            if (!setting.key || setting.value === undefined) { // value can be empty string or null
+            // DEBUG PRint settings array
+            console.log('[ConfigController] Setting:', JSON.stringify(setting)); // DEBUG
+            if (!setting.config_key || setting.config_value === undefined) { // value can be empty string or null
                 return res.status(400).json({ success: false, message: `Invalid setting object. Missing key or value for: ${JSON.stringify(setting)}` });
             }
         }

@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production'
-    ? '/api' // Relative path for production when served by same Node server
+    ? 'http://localhost:5001/api' // Relative path for production when served by same Node server
     : 'http://localhost:5001/api'; // Full path for development (React on 3000, API on 5001)
-
+console.log("API_BASE_URL:", API_BASE_URL); // For debugging
 const apiClient = axios.create({
     baseURL: API_BASE_URL,
 });

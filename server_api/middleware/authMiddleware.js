@@ -12,10 +12,19 @@ const users = [
 // console.log('Admin hash:', adminPasswordHash); // Store this hash
 
 module.exports = function (req, res, next) {
-    const authHeader = req.header('Authorization');
+    /*const authHeader = req.header('Authorization');
     if (!authHeader) {
         return res.status(401).json({ message: 'No token, authorization denied' });
+    }*/
+   //DEBUG
+   const authHeader = req.header('Authorization');
+    console.log('[AuthMiddleware] Received Authorization Header:', authHeader); // DEBUG
+
+    if (!authHeader) {
+        console.log('[AuthMiddleware] No Authorization header found.'); // DEBUG
+        return res.status(401).json({ message: 'No token, authorization denied' });
     }
+    //END-DEBUG
 
     // Check for Bearer token
     const parts = authHeader.split(' ');
@@ -27,8 +36,10 @@ module.exports = function (req, res, next) {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded.user; // Add user from payload
+        console.log('[AuthMiddleware] Token verified successfully. User:', JSON.stringify(req.user)); // DEBUG
         next();
     } catch (err) {
+        console.error('[AuthMiddleware] Token verification error:', err.message); // DEBUG
         res.status(401).json({ message: 'Token is not valid' });
     }
 };
